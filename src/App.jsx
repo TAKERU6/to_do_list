@@ -15,8 +15,10 @@ class App extends Component {
       all: true,
       done: false,
       notDone: false,
-      search: false
-    }
+      search: false,
+      sort: false
+    },
+    sortUpdatedList: []
   };
 
   handleChange = (event) => this.setState({ value: event.target.value });
@@ -85,7 +87,7 @@ class App extends Component {
     });
   };
   handleUpdate = (task) => {
-    const { editValue, tasks } = this.state;
+    const { editValue, tasks, sortUpdatedList } = this.state;
     const anotherTasks = tasks.filter((item) => item.id !== task.id);
     const updatedAt = new Date().toLocaleString();
     const newTask = {
@@ -98,7 +100,8 @@ class App extends Component {
     this.setState({
       tasks: newTasks,
       editValue: "",
-      editTaskId: ""
+      editTaskId: "",
+      sortUpdatedList: [...sortUpdatedList, newTask]
     });
   };
 
@@ -136,6 +139,17 @@ class App extends Component {
           taskStatus: { all: false, done: false, notDone: false, search: true }
         });
         break;
+      case "sort":
+        this.setState({
+          taskStatus: {
+            all: false,
+            done: false,
+            notDone: false,
+            search: false,
+            sort: true
+          }
+        });
+        break;
       default:
     }
   };
@@ -147,6 +161,10 @@ class App extends Component {
     if (taskStatus.notDone) return tasks.filter((item) => item.done === false);
     if (taskStatus.search)
       return tasks.filter((item) => item.value === searchValue);
+    if (taskStatus.sort)
+      return tasks.sort((a, b) => {
+        return a.updatedAt < b.updatedAt ? 1 : -1;
+      });
   };
 
   render() {
@@ -159,7 +177,7 @@ class App extends Component {
     } = this.state;
     const isSlectedTasks = !!selectedTasks.length;
     const renderTasks = this.handleTaskSort();
-    console.log(this.state.tasks);
+    console.log(this.state.sortUpdatedList);
 
     return (
       <>
@@ -187,6 +205,7 @@ class App extends Component {
         <button onClick={(e) => this.handleTaskStatus(e, "notDone")}>
           notDone
         </button>
+        <button onClick={(e) => this.handleTaskStatus(e, "sort")}>sort</button>
 
         <Tasks
           tasks={renderTasks}
