@@ -28,8 +28,8 @@ const Task = ({
       <button onClick={() => handleChangeStatus(task)}>
         {isDone ? "done cancel" : "done"}
       </button>
-      Create: {task.createdAt}
-      Update: {task.updatedAt}
+      [Create] {task.createdAt}
+      [Update] {task.updatedAt}
     </div>
   );
 };
